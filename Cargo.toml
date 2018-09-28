@@ -1,0 +1,22 @@
+[package]
+name = "math2d"
+version = "0.1.0"
+authors = ["Connie Hilarides <conni_h@outlook.com>"]
+edition = "2018"
+
+[features]
+default = ["serde", "d2d"]
+d2d = ["winapi"]
+serialize = ["serde", "serde_derive"]
+
+[dependencies]
+serde = { version = "1.0.79", optional = true }
+serde_derive = { version = "1.0.79", optional = true }
+
+[dev-dependencies]
+rand = "0.5.5"
+
+[target."cfg(windows)".dependencies.winapi]
+version = "0.3.5"
+optional = true
+features = ["dcommon"]
