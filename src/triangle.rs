@@ -6,7 +6,7 @@ use point2f::Point2f;
 use winapi::um::d2d1::D2D1_TRIANGLE;
 
 /// Represents a triangle described by its 3 corners.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Triangle {

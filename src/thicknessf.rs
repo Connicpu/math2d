@@ -3,7 +3,7 @@
 use vector2f::Vector2f;
 
 /// Represents a margin around an axis-aligned rectangle.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Thicknessf {

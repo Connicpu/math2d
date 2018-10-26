@@ -8,7 +8,7 @@ use winapi::um::dcommon::D2D_RECT_U;
 
 /// Represents a rectangle defined by the coordinates of the upper-left corner
 /// (left, top) and the coordinates of the lower-right corner (right, bottom).
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Rectu {

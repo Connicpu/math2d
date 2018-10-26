@@ -11,7 +11,7 @@ use winapi::um::d2d1::D2D1_ARC_SEGMENT;
 /// Describes an elliptical arc between two points. The starting point
 /// is implicit when an ArcSegment is used as part of a Path, as it is a
 /// continuation from the previous segment.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct ArcSegment {
@@ -51,7 +51,7 @@ impl ArcSegment {
 }
 
 /// Defines the direction that an elliptical arc is drawn.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(u32)]
 pub enum SweepDirection {
@@ -69,7 +69,7 @@ impl Default for SweepDirection {
 }
 
 /// Specifies whether an arc should be greater than 180 degrees.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(u32)]
 pub enum ArcSize {

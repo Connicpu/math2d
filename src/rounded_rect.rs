@@ -13,7 +13,7 @@ use winapi::um::d2d1::D2D1_ROUNDED_RECT;
 /// <img src="https://i.imgur.com/TFxM8zJ.png"
 ///      alt="Diagram visualizing the meaning of the structure components"
 ///      style="max-width: 350px" />
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct RoundedRect {

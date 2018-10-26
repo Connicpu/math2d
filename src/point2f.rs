@@ -10,7 +10,7 @@ use std::ops::{Add, Sub};
 use winapi::um::dcommon::D2D_POINT_2F;
 
 /// Mathematical point on the 2D (x, y) plane.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Point2f {

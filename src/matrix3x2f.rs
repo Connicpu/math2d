@@ -38,7 +38,7 @@ pub const IDENTITY: Matrix3x2f = Matrix3x2f::IDENTITY;
 ///
 /// This is also why points and vectors are the left-hand operand when multiplied
 /// with matrices.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Matrix3x2f {

@@ -7,7 +7,7 @@ use point2f::Point2f;
 use winapi::um::d2d1::D2D1_QUADRATIC_BEZIER_SEGMENT;
 
 /// Contains the control point and end point for a quadratic Bezier segment.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct QuadBezierSegment {

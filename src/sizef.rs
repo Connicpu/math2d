@@ -5,7 +5,7 @@ use winapi::um::dcommon::D2D_SIZE_F;
 
 /// Stores an ordered pair of floating-point values, typically the width
 /// and height of a rectangle.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Sizef {

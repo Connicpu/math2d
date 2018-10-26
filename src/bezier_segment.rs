@@ -9,7 +9,7 @@ use winapi::um::d2d1::D2D1_BEZIER_SEGMENT;
 
 /// Represents a cubic bezier segment drawn between two points. The first point
 /// in the bezier segment is implicitly the end point of the previous segment.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct BezierSegment {

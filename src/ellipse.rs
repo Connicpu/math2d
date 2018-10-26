@@ -7,7 +7,7 @@ use point2f::Point2f;
 use winapi::um::d2d1::D2D1_ELLIPSE;
 
 /// Contains the center point, x-radius, and y-radius of an ellipse.
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Ellipse {

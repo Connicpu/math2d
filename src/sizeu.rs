@@ -5,7 +5,7 @@ use winapi::um::dcommon::D2D_SIZE_U;
 
 /// Stores an ordered pair of unsigned integer values, typically the width
 /// and height of a rectangle.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Sizeu {
