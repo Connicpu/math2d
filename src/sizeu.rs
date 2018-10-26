@@ -1,3 +1,5 @@
+//! Unsigned integer size descriptor e.g. the size of a bitmap.
+
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_SIZE_U;
 

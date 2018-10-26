@@ -1,6 +1,8 @@
+//! Represents a margin around an axis-aligned rectangle.
+
 use vector2f::Vector2f;
 
-/// Represents a margin around an axis-aligned rectangle
+/// Represents a margin around an axis-aligned rectangle.
 #[derive(Copy, Clone, Debug)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]

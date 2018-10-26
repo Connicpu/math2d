@@ -1,14 +1,17 @@
+//! 2D Affine Transformation Matrix.
+//!
+//! See the actual struct documentation for more information.
+
 use point2f::Point2f;
 use vector2f::Vector2f;
 
 use std::f32::EPSILON;
 use std::ops::Mul;
 
-use mint;
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_MATRIX_3X2_F;
 
-    /// The 2D affine identity matrix.
+/// The 2D affine identity matrix.
 pub const IDENTITY: Matrix3x2f = Matrix3x2f::IDENTITY;
 
 /// 2D Affine Transformation Matrix.
@@ -239,7 +242,7 @@ impl Matrix3x2f {
     }
 
     /// Performs the inverse of the matrix without checking for invertibility.
-    /// 
+    ///
     /// *WARNING: If this matrix is not invertible, you may get NaN or INF!*
     #[inline]
     pub fn unchecked_inverse(&self, det: f32) -> Matrix3x2f {

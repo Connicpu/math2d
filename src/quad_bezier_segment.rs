@@ -1,3 +1,6 @@
+//! Quadratic version of the BezierSegment, uses 1 fewer control point than
+//! the cubic variant.
+
 use point2f::Point2f;
 
 #[cfg(all(windows, feature = "d2d"))]

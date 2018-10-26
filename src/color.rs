@@ -1,3 +1,5 @@
+//! RGBA Colors. Many colors have predefined constants for convenience.
+
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2dbasetypes::D2D_COLOR_F;
 

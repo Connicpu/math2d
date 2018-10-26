@@ -1,32 +1,33 @@
+//! Mathematical vector on the 2D (x, y) plane.
+
 use sizef::Sizef;
 use vector2i::Vector2i;
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-use mint;
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_VECTOR_2F;
 
-/// Mathematical vector on the 2D (x, y) plane
+/// Mathematical vector on the 2D (x, y) plane.
 #[derive(Copy, Clone, Debug, Default, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Vector2f {
-    /// Horizontal component
+    /// Horizontal component.
     pub x: f32,
-    /// Vertical component
+    /// Vertical component.
     pub y: f32,
 }
 
-/// Zero vector, addition identity value
+/// Zero vector, addition identity value.
 pub const ZERO: Vector2f = Vector2f::ZERO;
-/// One vector, multiplication identity value
+/// One vector, multiplication identity value.
 pub const ONE: Vector2f = Vector2f::ONE;
 
 impl Vector2f {
-    /// Zero vector, addition identity value
+    /// Zero vector, addition identity value.
     pub const ZERO: Vector2f = Vector2f { x: 0.0, y: 0.0 };
-    /// One vector, multiplication identity value
+    /// One vector, multiplication identity value.
     pub const ONE: Vector2f = Vector2f { x: 1.0, y: 1.0 };
 
     /// Up vector in the top-left coordinate system common to
@@ -42,7 +43,7 @@ impl Vector2f {
     /// 2D drawing systems.
     pub const LEFT: Vector2f = Vector2f { x: -1.0, y: 0.0 };
 
-    /// Construct a vector from the components
+    /// Construct a vector from the components.
     #[inline]
     pub fn new(x: f32, y: f32) -> Self {
         Vector2f { x, y }

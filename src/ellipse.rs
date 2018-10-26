@@ -1,3 +1,5 @@
+//! Axis-aligned ellipse constructed from a center point and the x and y radii.
+
 use matrix3x2f::Matrix3x2f;
 use point2f::Point2f;
 

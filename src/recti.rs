@@ -1,3 +1,5 @@
+//! Axis-aligned rectangle defined by the lines of its 4 edges.
+
 use rectf::Rectf;
 use rectu::Rectu;
 

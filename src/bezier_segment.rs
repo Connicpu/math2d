@@ -1,3 +1,7 @@
+//! BezierSegment represents a curved line in a Path shaped as a
+//! cubic bezier segment i.e. a bezier line segment with 4 points,
+//! the two center ones acting as control points.
+
 use point2f::Point2f;
 
 #[cfg(all(windows, feature = "d2d"))]
@@ -5,10 +9,6 @@ use winapi::um::d2d1::D2D1_BEZIER_SEGMENT;
 
 /// Represents a cubic bezier segment drawn between two points. The first point
 /// in the bezier segment is implicitly the end point of the previous segment.
-/// 
-/// [Direct2D Documentation][1]
-/// 
-/// [1]: https://docs.microsoft.com/en-us/windows/desktop/api/d2d1/ns-d2d1-d2d1_bezier_segment
 #[derive(Copy, Clone, Debug, Default)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]

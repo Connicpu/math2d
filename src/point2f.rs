@@ -1,10 +1,11 @@
+//! Mathematical point on the 2D (x, y) plane.
+
 use point2i::Point2i;
 use point2u::Point2u;
 use vector2f::Vector2f;
 
 use std::ops::{Add, Sub};
 
-use mint;
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_POINT_2F;
 

@@ -1,3 +1,7 @@
+//! ArcSegments represent a curved line following the path of an ellipse
+//! and are designed to be part of a Path. See Direct2D, SVG, etc for
+//! an overview of the Path concept.
+
 use point2f::Point2f;
 use sizef::Sizef;
 

@@ -5,7 +5,7 @@ authors = ["Connie Hilarides <conni_h@outlook.com>"]
 # edition = "2015"
 
 [features]
-default = ["docs"]
+default = []
 d2d = ["winapi"]
 serialize = ["serde", "serde_derive"]
 docs = ["serialize", "d2d", "mint"]

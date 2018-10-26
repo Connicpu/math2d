@@ -1,3 +1,5 @@
+//! Floating point size descriptor.
+
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_SIZE_F;
 

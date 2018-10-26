@@ -1,3 +1,5 @@
+//! Axis-aligned rectangle defined by the lines of its 4 edges.
+
 use point2f::Point2f;
 use recti::Recti;
 use rectu::Rectu;
@@ -16,13 +18,13 @@ use winapi::um::dcommon::D2D_RECT_F;
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Rectf {
-    /// The x-coordinate of the upper-left corner of the rectangle.
+    /// The x-coordinate of the left edge of the rectangle.
     pub left: f32,
-    /// The y-coordinate of the upper-left corner of the rectangle.
+    /// The y-coordinate of the top edge of the rectangle.
     pub top: f32,
-    /// The x-coordinate of the lower-right corner of the rectangle.
+    /// The x-coordinate of the right edge of the rectangle.
     pub right: f32,
-    /// The y-coordinate of the lower-right corner of the rectangle.
+    /// The y-coordinate of the bottom edge of the rectangle.
     pub bottom: f32,
 }
 

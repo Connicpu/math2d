@@ -1,11 +1,11 @@
+//! Mathematical vector on the 2D (x, y) plane.
+
 use sizeu::Sizeu;
 use vector2f::Vector2f;
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-use mint;
-
-/// Mathematical vector on the 2D (x, y) plane
+/// Mathematical vector on the 2D (x, y) plane.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]

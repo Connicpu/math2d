@@ -1,3 +1,5 @@
+//! Rounded rectangle. See the struct documentation for more information.
+
 use ellipse::Ellipse;
 use point2f::Point2f;
 use rectf::{RectCorner, Rectf};
