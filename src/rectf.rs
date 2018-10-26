@@ -7,6 +7,7 @@ use sizef::Sizef;
 use thicknessf::Thicknessf;
 use vector2f::Vector2f;
 
+use std::f32::{INFINITY, NEG_INFINITY};
 use std::ops::{Add, Sub};
 
 #[cfg(all(windows, feature = "d2d"))]
@@ -43,6 +44,14 @@ pub enum RectCorner {
 }
 
 impl Rectf {
+    /// A rect that holds the entire real space
+    pub const INFINITE: Rectf = Rectf {
+        left: NEG_INFINITY,
+        top: NEG_INFINITY,
+        right: INFINITY,
+        bottom: INFINITY,
+    };
+
     /// Constructs the rectangle from components.
     #[inline]
     pub fn new(left: f32, top: f32, right: f32, bottom: f32) -> Rectf {
