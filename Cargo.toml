@@ -3,7 +3,19 @@ name = "math2d"
 version = "0.1.0"
 authors = ["Connie Hilarides <conni_h@outlook.com>"]
 license = "MIT"
-# edition = "2015"
+repository = "https://github.com/connicpu/math2d"
+description = """
+2D Mathematics library designed for use with 2D drawing applications.
+
+Primarily designed for the needs of Direct2D, but this library should
+be perfectly capable of filling in the needs of other libraries such
+as Cairo. If you would like interoperability defitions added please feel
+free to open a pull request on the repository.
+
+Currently compatible with:
+- `Direct2D` (winapi types)
+- `Mint` (crate)
+"""
 
 [features]
 default = []
