@@ -1,12 +1,14 @@
-use crate::point2f::Point2f;
-use crate::vector2f::Vector2f;
+use point2f::Point2f;
+use vector2f::Vector2f;
 
 use std::f32::EPSILON;
 use std::ops::Mul;
 
+use mint;
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_MATRIX_3X2_F;
 
+    /// The 2D affine identity matrix.
 pub const IDENTITY: Matrix3x2f = Matrix3x2f::IDENTITY;
 
 /// 2D Affine Transformation Matrix.
@@ -35,6 +37,7 @@ pub const IDENTITY: Matrix3x2f = Matrix3x2f::IDENTITY;
 /// with matrices.
 #[derive(Copy, Clone, Debug)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
+#[repr(C)]
 pub struct Matrix3x2f {
     /// Horizontal scaling / cosine of rotation
     pub a: f32,
@@ -101,6 +104,13 @@ impl Matrix3x2f {
 
     /// Creates an affine translation matrix that translates points by the passed
     /// vector. The linear part of the matrix is the identity.
+    ///
+    /// ![Example Translation][1]
+    ///
+    /// [Read More][2]
+    ///
+    /// [1]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/images/translation-ovw.png
+    /// [2]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/how-to-translate
     #[inline]
     pub fn translation(trans: impl Into<Vector2f>) -> Matrix3x2f {
         let trans = trans.into();
@@ -119,6 +129,13 @@ impl Matrix3x2f {
     /// of origin. This is equivalent to translating the center point back to
     /// the origin, scaling around the origin by the scaling value, and then
     /// translating the center point back to its original location.
+    ///
+    /// ![Example Scaling][1]
+    ///
+    /// [Read More][2]
+    ///
+    /// [1]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/images/scale-ovw.png
+    /// [2]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/how-to-scale
     #[inline]
     pub fn scaling(scale: impl Into<Vector2f>, center: impl Into<Point2f>) -> Matrix3x2f {
         let scale = scale.into();
@@ -138,6 +155,13 @@ impl Matrix3x2f {
     /// of origin. This is equivalent to translating the center point back to the
     /// origin, rotating around the origin by the specified angle, and then
     /// translating the center point back to its original location.
+    ///
+    /// ![Example Rotation][1]
+    ///
+    /// [Read More][2]
+    ///
+    /// [1]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/images/rotate-ovw.png
+    /// [2]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/how-to-rotate
     #[inline]
     pub fn rotation(angle: f32, center: impl Into<Point2f>) -> Matrix3x2f {
         let center = center.into();
@@ -154,6 +178,14 @@ impl Matrix3x2f {
         }
     }
 
+    /// Creates a matrix that skews an object by a tangent angle around the center point.
+    ///
+    /// ![Example Effect of Skewing][1]
+    ///
+    /// [Read More][2]
+    ///
+    /// [1]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/images/skew-ovw.png
+    /// [2]: https://docs.microsoft.com/en-us/windows/desktop/Direct2D/how-to-skew
     #[inline]
     pub fn skew(angle_x: f32, angle_y: f32, center: impl Into<Point2f>) -> Matrix3x2f {
         let center = center.into();
@@ -170,34 +202,59 @@ impl Matrix3x2f {
         }
     }
 
+    /// Returns the determinant of the matrix. Since this matrix is conceptually 3x3, and the
+    /// bottom-right element is always 1, this value works out to be `a * d - b * c`.
     #[inline]
     pub fn determinant(&self) -> f32 {
         self.a * self.d - self.b * self.c
     }
 
+    /// Determines if the `inverse` or `try_inverse` functions would succeed if called. A
+    /// matrix is invertible if its determinant is nonzero. Since we're dealing with floats,
+    /// we check that the absolute value of the determinant is greater than f32::EPSILON.
     #[inline]
     pub fn is_invertible(&self) -> bool {
         Matrix3x2f::det_shows_invertible(self.determinant())
     }
 
+    /// Calculates the inverse of this matrix. Panics if the matrix is not invertible (see above).
     #[inline]
     pub fn inverse(&self) -> Matrix3x2f {
         let det = self.determinant();
         assert!(Matrix3x2f::det_shows_invertible(det));
 
-        self.do_inverse(det)
+        self.unchecked_inverse(det)
     }
 
+    /// Calculates the inverse of the matrix. Returns None if the determinant is less than
+    /// f32::EPSILON.
     #[inline]
     pub fn try_inverse(&self) -> Option<Matrix3x2f> {
         let det = self.determinant();
         if Matrix3x2f::det_shows_invertible(det) {
-            Some(self.do_inverse(det))
+            Some(self.unchecked_inverse(det))
         } else {
             None
         }
     }
 
+    /// Performs the inverse of the matrix without checking for invertibility.
+    /// 
+    /// *WARNING: If this matrix is not invertible, you may get NaN or INF!*
+    #[inline]
+    pub fn unchecked_inverse(&self, det: f32) -> Matrix3x2f {
+        Matrix3x2f {
+            a: self.d / det,
+            b: self.b / -det,
+            c: self.c / -det,
+            d: self.a / det,
+            x: (self.d * self.x - self.c * self.y) / -det,
+            y: (self.b * self.x - self.a * self.y) / det,
+        }
+    }
+
+    /// Compose a matrix from a scaling, rotation, and translation value
+    /// (combined in that order).
     #[inline]
     pub fn compose(
         scaling: impl Into<Vector2f>,
@@ -224,7 +281,7 @@ impl Matrix3x2f {
     #[inline]
     pub fn decompose(&self) -> Decomposition {
         Decomposition {
-            translation: (self.x, self.y).into(),
+            translation: [self.x, self.y].into(),
             scaling: Vector2f {
                 x: (self.a * self.a + self.c * self.c).sqrt(),
                 y: (self.b * self.b + self.d * self.d).sqrt(),
@@ -269,6 +326,7 @@ impl Matrix3x2f {
         ]
     }
 
+    /// Checks if two matrices are approximately equal given an epsilon value.
     #[inline]
     pub fn is_approx_eq(&self, other: &Matrix3x2f, epsilon: f32) -> bool {
         return (self.a - other.a).abs() < epsilon
@@ -279,24 +337,15 @@ impl Matrix3x2f {
             && (self.y - other.y).abs() < epsilon;
     }
 
+    /// Checks if this matrix is equal to the identity matrix within 1e-5
     #[inline]
     pub fn is_identity(&self) -> bool {
-        self.is_approx_eq(&Matrix3x2f::IDENTITY, 1e-6)
+        self.is_approx_eq(&Matrix3x2f::IDENTITY, 1e-5)
     }
 
+    #[inline]
     fn det_shows_invertible(det: f32) -> bool {
         det.abs() > EPSILON
-    }
-
-    fn do_inverse(&self, det: f32) -> Matrix3x2f {
-        Matrix3x2f {
-            a: self.d / det,
-            b: self.b / -det,
-            c: self.c / -det,
-            d: self.a / det,
-            x: (self.d * self.x - self.c * self.y) / -det,
-            y: (self.b * self.x - self.a * self.y) / det,
-        }
     }
 }
 
@@ -356,6 +405,13 @@ impl From<Matrix3x2f> for [[f32; 2]; 3] {
     }
 }
 
+impl From<Matrix3x2f> for [[f32; 3]; 3] {
+    #[inline]
+    fn from(m: Matrix3x2f) -> [[f32; 3]; 3] {
+        m.to_row_major()
+    }
+}
+
 #[cfg(all(windows, feature = "d2d"))]
 impl From<Matrix3x2f> for D2D_MATRIX_3X2_F {
     #[inline]
@@ -380,14 +436,56 @@ impl Default for Matrix3x2f {
     }
 }
 
+/// Represents a decomposition of a non-skewing matrix i.e. one made up of
+/// only rotations, translations, and scalings.
 pub struct Decomposition {
-    pub translation: Vector2f,
+    /// Total scaling applied in the transformation. This operation is applied
+    /// first if the decomposition is recomposed.
     pub scaling: Vector2f,
+    /// Total rotation applied in the transformation. This operation is applied
+    /// second if the decomposition is recomposed.
     pub rotation: f32,
+    /// Total translation applied in the transformation. This operation is
+    /// applied last if the decomposition is recomposed.
+    pub translation: Vector2f,
 }
 
 impl From<Decomposition> for Matrix3x2f {
+    #[inline]
     fn from(decomp: Decomposition) -> Matrix3x2f {
         Matrix3x2f::compose(decomp.scaling, decomp.rotation, decomp.translation)
     }
+}
+
+#[cfg(feature = "mint")]
+impl From<Matrix3x2f> for mint::RowMatrix3x2<f32> {
+    #[inline]
+    fn from(mat: Matrix3x2f) -> mint::RowMatrix3x2<f32> {
+        mint::RowMatrix3x2 {
+            x: [mat.a, mat.b].into(),
+            y: [mat.c, mat.d].into(),
+            z: [mat.x, mat.y].into(),
+        }
+    }
+}
+
+#[cfg(all(test, windows, feature = "d2d"))]
+#[test]
+fn mat32_d2d_bin_compat() {
+    use std::mem::size_of_val;
+
+    fn ptr_eq<T>(a: &T, b: &T) -> bool {
+        (a as *const T) == (b as *const T)
+    }
+
+    let mat = Matrix3x2f::IDENTITY;
+    let d2d = unsafe { &*((&mat) as *const _ as *const D2D_MATRIX_3X2_F) };
+
+    assert!(ptr_eq(&mat.a, &d2d.matrix[0][0]));
+    assert!(ptr_eq(&mat.b, &d2d.matrix[0][1]));
+    assert!(ptr_eq(&mat.c, &d2d.matrix[1][0]));
+    assert!(ptr_eq(&mat.d, &d2d.matrix[1][1]));
+    assert!(ptr_eq(&mat.x, &d2d.matrix[2][0]));
+    assert!(ptr_eq(&mat.y, &d2d.matrix[2][1]));
+    assert_eq!(size_of_val(&mat), size_of_val(d2d));
 }

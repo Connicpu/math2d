@@ -1,26 +1,47 @@
-use crate::point2f::Point2f;
-use crate::recti::Recti;
-use crate::rectu::Rectu;
-use crate::sizef::Sizef;
-use crate::thicknessf::Thicknessf;
-use crate::vector2f::Vector2f;
-use crate::RectCorner;
+use point2f::Point2f;
+use recti::Recti;
+use rectu::Rectu;
+use sizef::Sizef;
+use thicknessf::Thicknessf;
+use vector2f::Vector2f;
 
 use std::ops::{Add, Sub};
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_RECT_F;
 
+/// Represents a rectangle defined by the coordinates of the upper-left corner
+/// (left, top) and the coordinates of the lower-right corner (right, bottom).
 #[derive(Copy, Clone, Debug, Default)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
+#[repr(C)]
 pub struct Rectf {
+    /// The x-coordinate of the upper-left corner of the rectangle.
     pub left: f32,
+    /// The y-coordinate of the upper-left corner of the rectangle.
     pub top: f32,
+    /// The x-coordinate of the lower-right corner of the rectangle.
     pub right: f32,
+    /// The y-coordinate of the lower-right corner of the rectangle.
     pub bottom: f32,
 }
 
+/// Represents a corner of the rectangle
+#[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
+pub enum RectCorner {
+    /// The (left, top) coordinate pair
+    TopLeft,
+    /// The (right, top) coordinate pair
+    TopRight,
+    /// The (left, bottom) coordinate pair
+    BottomLeft,
+    /// The (right, bottom) coordinate pair
+    BottomRight,
+}
+
 impl Rectf {
+    /// Constructs the rectangle from components.
     #[inline]
     pub fn new(left: f32, top: f32, right: f32, bottom: f32) -> Rectf {
         Rectf {
@@ -31,8 +52,12 @@ impl Rectf {
         }
     }
 
+    /// Constructs a rectangle that will encompass all of the axis-aligned
+    /// space between the two provided points.
     #[inline]
-    pub fn from_points(p1: Point2f, p2: Point2f) -> Rectf {
+    pub fn from_points(p1: impl Into<Point2f>, p2: impl Into<Point2f>) -> Rectf {
+        let p1 = p1.into();
+        let p2 = p2.into();
         Rectf {
             left: p1.x.min(p2.x),
             top: p1.y.min(p2.y),
@@ -41,6 +66,8 @@ impl Rectf {
         }
     }
 
+    /// Constructs a rectangle given its desired center point and desired
+    /// width and height.
     #[inline]
     pub fn from_center_size(center: impl Into<Point2f>, size: impl Into<Sizef>) -> Rectf {
         let center = center.into();
@@ -53,8 +80,10 @@ impl Rectf {
         }
     }
 
+    /// Constructs a rectangle given its desired center and the desired
+    /// distance from the center to the corners.
     #[inline]
-    pub fn from_center_half_extents(
+    pub fn from_center_half_extent(
         center: impl Into<Point2f>,
         half_extents: impl Into<Vector2f>,
     ) -> Rectf {
@@ -68,6 +97,8 @@ impl Rectf {
         }
     }
 
+    /// Converts this rectangle's components to signed integers. Truncates
+    /// values, perform manual rounding if you would like a different behavior.
     #[inline]
     pub fn to_i32(&self) -> Recti {
         Recti {
@@ -78,6 +109,9 @@ impl Rectf {
         }
     }
 
+    /// Converts the components of the rectangle to unsigned integers. Beware
+    /// this conversion if the components could be negative, you will experience
+    /// unsigned casting underflow.
     #[inline]
     pub fn to_u32(&self) -> Rectu {
         Rectu {
@@ -88,21 +122,44 @@ impl Rectf {
         }
     }
 
+    /// Rounds the components to the nearest integers, rounding
+    /// half-way values away from zero.
     #[inline]
-    pub fn get_size(&self) -> Sizef {
+    pub fn rounded(&self) -> Rectf {
+        Rectf {
+            left: self.left.round(),
+            top: self.top.round(),
+            right: self.right.round(),
+            bottom: self.bottom.round(),
+        }
+    }
+
+    /// Gets the width and height of this rectangle.
+    #[inline]
+    pub fn size(&self) -> Sizef {
         (self.right - self.bottom, self.bottom - self.top).into()
     }
 
+    /// Gets the center point of this rectangle.
     #[inline]
-    pub fn get_center(&self) -> Point2f {
+    pub fn center(&self) -> Point2f {
         Point2f {
             x: (self.left + self.right) / 2.0,
             y: (self.top + self.bottom) / 2.0,
         }
     }
 
+    /// Gets the half-extent of the rectangle i.e. the vector from the
+    /// center to the most-positive corner.
     #[inline]
-    pub fn get_corner(&self, corner: RectCorner) -> Point2f {
+    pub fn half_extent(&self) -> Vector2f {
+        let size = self.size();
+        [size.width / 2.0, size.height / 2.0].into()
+    }
+
+    /// Get the point of the specified corner.
+    #[inline]
+    pub fn corner(&self, corner: RectCorner) -> Point2f {
         match corner {
             RectCorner::TopLeft => (self.left, self.top).into(),
             RectCorner::TopRight => (self.right, self.top).into(),
@@ -111,6 +168,7 @@ impl Rectf {
         }
     }
 
+    /// Determines if the specified point is located inside the rectangle.
     #[inline]
     pub fn contains_point(&self, point: impl Into<Point2f>) -> bool {
         let point = point.into();
@@ -120,6 +178,8 @@ impl Rectf {
             && point.y <= self.bottom;
     }
 
+    /// Normalizes the rectangle to enforce the invariants
+    /// `left < right` and `top < bottom`.
     #[inline]
     pub fn normalized(self) -> Self {
         Rectf {
@@ -130,6 +190,7 @@ impl Rectf {
         }
     }
 
+    /// Translates the rectangle by the given vector.
     #[inline]
     pub fn translated_by(self, translation: impl Into<Vector2f>) -> Self {
         let trans = translation.into();
@@ -141,6 +202,7 @@ impl Rectf {
         }
     }
 
+    /// Expands the rectangle by the given margin.
     #[inline]
     pub fn expanded_by(self, thickness: impl Into<Thicknessf>) -> Self {
         let t = thickness.into();
@@ -152,6 +214,7 @@ impl Rectf {
         }
     }
 
+    /// Shrinks the rectangle by the given margin.
     #[inline]
     pub fn shrunken_by(self, thickness: impl Into<Thicknessf>) -> Self {
         let t = thickness.into();
@@ -163,8 +226,10 @@ impl Rectf {
         }
     }
 
+    /// Constructs a rectangle that contains both rectangles. Normalizes
+    /// both arguments before performing the operation.
     #[inline]
-    pub fn combined_with(self, other: impl Into<Rectf>) -> Self {
+    pub fn combined_with(&self, other: impl Into<Rectf>) -> Self {
         let r1 = self.normalized();
         let r2 = other.into().normalized();
 
@@ -216,14 +281,15 @@ impl From<(Point2f, Sizef)> for Rectf {
 
 impl From<(Point2f, Vector2f)> for Rectf {
     #[inline]
-    fn from((center, half_extents): (Point2f, Vector2f)) -> Rectf {
-        Rectf::from_center_half_extents(center, half_extents)
+    fn from((center, half_extent): (Point2f, Vector2f)) -> Rectf {
+        Rectf::from_center_half_extent(center, half_extent)
     }
 }
 
-impl From<(f32, f32, f32, f32)> for Rectf {
+impl From<[f32; 4]> for Rectf {
     #[inline]
-    fn from((left, top, right, bottom): (f32, f32, f32, f32)) -> Rectf {
+    fn from(p: [f32; 4]) -> Rectf {
+        let (left, top, right, bottom) = (p[0], p[1], p[2], p[3]);
         Rectf {
             left,
             top,
@@ -257,4 +323,23 @@ impl From<D2D_RECT_F> for Rectf {
             bottom: rect.bottom,
         }
     }
+}
+
+#[cfg(all(test, windows, feature = "d2d"))]
+#[test]
+fn rectf_d2d_bin_compat() {
+    use std::mem::size_of_val;
+
+    fn ptr_eq<T>(a: &T, b: &T) -> bool {
+        (a as *const T) == (b as *const T)
+    }
+
+    let rect = Rectf::new(0.0, 0.0, 0.0, 0.0);
+    let d2d = unsafe { &*((&rect) as *const _ as *const D2D_RECT_F) };
+
+    assert!(ptr_eq(&rect.left, &d2d.left));
+    assert!(ptr_eq(&rect.top, &d2d.top));
+    assert!(ptr_eq(&rect.right, &d2d.right));
+    assert!(ptr_eq(&rect.bottom, &d2d.bottom));
+    assert_eq!(size_of_val(&rect), size_of_val(d2d));
 }

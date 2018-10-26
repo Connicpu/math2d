@@ -2,16 +2,18 @@
 name = "math2d"
 version = "0.1.0"
 authors = ["Connie Hilarides <conni_h@outlook.com>"]
-edition = "2018"
+# edition = "2015"
 
 [features]
-default = ["serde", "d2d"]
+default = ["docs"]
 d2d = ["winapi"]
 serialize = ["serde", "serde_derive"]
+docs = ["serialize", "d2d", "mint"]
 
 [dependencies]
 serde = { version = "1.0.79", optional = true }
 serde_derive = { version = "1.0.79", optional = true }
+mint = { version = "0.5.1", optional = true }
 
 [dev-dependencies]
 rand = "0.5.5"
@@ -19,4 +21,8 @@ rand = "0.5.5"
 [target."cfg(windows)".dependencies.winapi]
 version = "0.3.5"
 optional = true
-features = ["dcommon"]
+features = ["dcommon", "d2dbasetypes", "d2d1"]
+
+[package.metadata.docs.rs]
+features = ["docs"]
+default-target = "x86_64-pc-windows-msvc"

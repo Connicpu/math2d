@@ -125,11 +125,11 @@ fn random_compositions() {
         let ty = rng.gen::<f32>() * 50.0 - 25.0;
         println!("s({}, {}) * r({}) * t({}, {})", sx, sy, angle, tx, ty);
 
-        let mat = Matrix3x2f::compose((sx, sy), angle, (tx, ty));
+        let mat = Matrix3x2f::compose([sx, sy], angle, [tx, ty]);
         let decomp = mat.decompose();
 
-        assert!(decomp.translation.is_approx_eq((tx, ty), EPSILON));
-        assert!(decomp.scaling.is_approx_eq((sx, sy), EPSILON));
+        assert!(decomp.translation.is_approx_eq([tx, ty], EPSILON));
+        assert!(decomp.scaling.is_approx_eq([sx, sy], EPSILON));
         assert_angle_approx(decomp.rotation, angle);
 
         let composed: Matrix3x2f = decomp.into();
