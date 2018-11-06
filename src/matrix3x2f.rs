@@ -10,6 +10,8 @@ use std::ops::Mul;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_MATRIX_3X2_F;
+#[cfg(all(windows, feature = "d2d"))]
+use winapi::um::dwrite::DWRITE_MATRIX;
 
 /// The 2D affine identity matrix.
 pub const IDENTITY: Matrix3x2f = Matrix3x2f::IDENTITY;
@@ -202,6 +204,19 @@ impl Matrix3x2f {
             d: 1.0,
             x: -center.y * tany,
             y: -center.x * tanx,
+        }
+    }
+
+    #[inline]
+    /// Computes the transpose of the linear part of this matrix i.e. swap(b, c).
+    pub fn linear_transpose(&self) -> Matrix3x2f {
+        Matrix3x2f {
+            a: self.a,
+            b: self.c,
+            c: self.b,
+            d: self.d,
+            x: self.x,
+            y: self.y,
         }
     }
 
@@ -429,6 +444,36 @@ impl From<D2D_MATRIX_3X2_F> for Matrix3x2f {
     #[inline]
     fn from(m: D2D_MATRIX_3X2_F) -> Matrix3x2f {
         Matrix3x2f::new(m.matrix)
+    }
+}
+
+#[cfg(all(windows, feature = "d2d"))]
+impl From<Matrix3x2f> for DWRITE_MATRIX {
+    #[inline]
+    fn from(m: Matrix3x2f) -> DWRITE_MATRIX {
+        DWRITE_MATRIX {
+            m11: m.a,
+            m12: m.b,
+            m21: m.c,
+            m22: m.d,
+            dx: m.x,
+            dy: m.y,
+        }
+    }
+}
+
+#[cfg(all(windows, feature = "d2d"))]
+impl From<DWRITE_MATRIX> for Matrix3x2f {
+    #[inline]
+    fn from(m: DWRITE_MATRIX) -> Matrix3x2f {
+        Matrix3x2f {
+            a: m.m11,
+            b: m.m12,
+            c: m.m21,
+            d: m.m22,
+            x: m.dx,
+            y: m.dy,
+        }
     }
 }
 
