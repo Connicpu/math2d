@@ -4,13 +4,13 @@ use point2f::Point2f;
 use point2u::Point2u;
 use vector2i::Vector2i;
 
-use std::ops::{Add, Sub};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_POINT_2L;
 
 /// Mathematical point on the 2D (x, y) plane.
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct Point2i {
@@ -124,6 +124,24 @@ where
     }
 }
 
+impl<V> AddAssign<V> for Point2i
+where
+    Point2i: Add<V, Output = Point2i>,
+{
+    fn add_assign(&mut self, v: V) {
+        *self = *self + v;
+    }
+}
+
+impl<V> SubAssign<V> for Point2i
+where
+    Point2i: Sub<V, Output = Point2i>,
+{
+    fn sub_assign(&mut self, v: V) {
+        *self = *self - v;
+    }
+}
+
 impl From<(i32, i32)> for Point2i {
     #[inline]
     fn from((x, y): (i32, i32)) -> Point2i {
@@ -131,17 +149,10 @@ impl From<(i32, i32)> for Point2i {
     }
 }
 
-impl From<[i32; 2]> for Point2i {
+impl From<Point2i> for (i32, i32) {
     #[inline]
-    fn from(p: [i32; 2]) -> Point2i {
-        Point2i { x: p[0], y: p[0] }
-    }
-}
-
-impl From<Point2i> for [i32; 2] {
-    #[inline]
-    fn from(p: Point2i) -> [i32; 2] {
-        [p.x, p.y]
+    fn from(p: Point2i) -> (i32, i32) {
+        (p.x, p.y)
     }
 }
 

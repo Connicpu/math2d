@@ -3,7 +3,7 @@
 use sizeu::Sizeu;
 use vector2f::Vector2f;
 
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// Mathematical vector on the 2D (x, y) plane.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
@@ -141,6 +141,42 @@ impl Div<Vector2i> for i32 {
             x: self / rhs.x,
             y: self / rhs.y,
         }
+    }
+}
+
+impl<V> AddAssign<V> for Vector2i
+where
+    Vector2i: Add<V, Output = Vector2i>,
+{
+    fn add_assign(&mut self, v: V) {
+        *self = *self + v;
+    }
+}
+
+impl<V> SubAssign<V> for Vector2i
+where
+    Vector2i: Sub<V, Output = Vector2i>,
+{
+    fn sub_assign(&mut self, v: V) {
+        *self = *self - v;
+    }
+}
+
+impl<V> MulAssign<V> for Vector2i
+where
+    Vector2i: Mul<V, Output = Vector2i>,
+{
+    fn mul_assign(&mut self, v: V) {
+        *self = *self * v;
+    }
+}
+
+impl<V> DivAssign<V> for Vector2i
+where
+    Vector2i: Div<V, Output = Vector2i>,
+{
+    fn div_assign(&mut self, v: V) {
+        *self = *self / v;
     }
 }
 

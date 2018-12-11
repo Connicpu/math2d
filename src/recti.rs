@@ -1,5 +1,6 @@
 //! Axis-aligned rectangle defined by the lines of its 4 edges.
 
+use point2i::Point2i;
 use rectf::Rectf;
 use rectu::Rectu;
 
@@ -23,6 +24,14 @@ pub struct Recti {
 }
 
 impl Recti {
+    /// An inversely empty rectangle that contains no points
+    pub const EMPTY: Recti = Recti {
+        left: std::i32::MAX,
+        top: std::i32::MAX,
+        right: std::i32::MIN,
+        bottom: std::i32::MIN,
+    };
+
     /// Constructs the rectangle from components.
     #[inline]
     pub fn new(left: i32, top: i32, right: i32, bottom: i32) -> Recti {
@@ -31,6 +40,17 @@ impl Recti {
             top,
             right,
             bottom,
+        }
+    }
+
+    #[inline]
+    pub fn point(point: impl Into<Point2i>) -> Self {
+        let point = point.into();
+        Recti {
+            left: point.x,
+            right: point.x,
+            top: point.y,
+            bottom: point.y,
         }
     }
 
@@ -56,6 +76,86 @@ impl Recti {
             right: self.right as u32,
             bottom: self.bottom as u32,
         }
+    }
+
+    /// Determines if the specified point is located inside the rectangle.
+    #[inline]
+    pub fn contains_point(&self, point: impl Into<Point2i>) -> bool {
+        let point = point.into();
+        return point.x >= self.left
+            && point.y >= self.top
+            && point.x <= self.right
+            && point.y <= self.bottom;
+    }
+
+    #[inline]
+    pub fn is_on_edge(&self, point: impl Into<Point2i>) -> bool {
+        let point = point.into();
+        return point.x == self.left
+            || point.x == self.right
+            || point.y == self.top
+            || point.y == self.bottom;
+    }
+
+    /// Normalizes the rectangle to enforce the invariants
+    /// `left < right` and `top < bottom`.
+    #[inline]
+    pub fn normalized(self) -> Self {
+        Recti {
+            left: self.left.min(self.right),
+            top: self.top.min(self.bottom),
+            right: self.left.max(self.top),
+            bottom: self.top.max(self.bottom),
+        }
+    }
+
+    /// Constructs a rectangle that contains both rectangles. Normalizes
+    /// both arguments before performing the operation.
+    #[inline]
+    pub fn combined_with(&self, other: impl Into<Recti>) -> Self {
+        let r2 = other.into();
+
+        let left = self.left.min(r2.left);
+        let top = self.top.min(r2.top);
+        let right = self.right.max(r2.right);
+        let bottom = self.bottom.max(r2.bottom);
+
+        Recti {
+            left,
+            top,
+            right,
+            bottom,
+        }
+    }
+
+    #[inline]
+    pub fn area(&self) -> i64 {
+        let width = (self.right - self.left) as i64;
+        let height = (self.bottom - self.top) as i64;
+        width * height
+    }
+
+    #[inline]
+    pub fn rows(&self) -> impl Iterator<Item = i32> {
+        self.top..=self.bottom
+    }
+
+    #[inline]
+    pub fn columns(&self) -> impl Iterator<Item = i32> {
+        self.left..=self.right
+    }
+
+    #[inline]
+    pub fn points(self) -> impl Iterator<Item = Point2i> {
+        self.rows()
+            .flat_map(move |row| self.columns().map(move |col| (col, row).into()))
+    }
+}
+
+impl From<Point2i> for Recti {
+    #[inline]
+    fn from(point: Point2i) -> Recti {
+        Recti::point(point)
     }
 }
 
