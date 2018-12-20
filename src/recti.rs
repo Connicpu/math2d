@@ -6,6 +6,8 @@ use rectu::Rectu;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_RECT_L;
+#[cfg(all(windows, feature = "d2d"))]
+use winapi::um::wincodec::WICRect;
 
 /// Represents a rectangle defined by the coordinates of the upper-left corner
 /// (left, top) and the coordinates of the lower-right corner (right, bottom).
@@ -129,9 +131,19 @@ impl Recti {
     }
 
     #[inline]
+    pub fn width(&self) -> i32 {
+        self.right - self.left
+    }
+
+    #[inline]
+    pub fn height(&self) -> i32 {
+        self.bottom - self.top
+    }
+
+    #[inline]
     pub fn area(&self) -> i64 {
-        let width = (self.right - self.left) as i64;
-        let height = (self.bottom - self.top) as i64;
+        let width = self.width() as i64;
+        let height = self.height() as i64;
         width * height
     }
 
@@ -181,6 +193,32 @@ impl From<D2D_RECT_L> for Recti {
             top: rect.top,
             right: rect.right,
             bottom: rect.bottom,
+        }
+    }
+}
+
+#[cfg(all(windows, feature = "d2d"))]
+impl From<WICRect> for Recti {
+    #[inline]
+    fn from(rect: WICRect) -> Recti {
+        Recti {
+            left: rect.X,
+            top: rect.Y,
+            right: rect.X + rect.Width,
+            bottom: rect.Y + rect.Height,
+        }
+    }
+}
+
+#[cfg(all(windows, feature = "d2d"))]
+impl From<Recti> for WICRect {
+    #[inline]
+    fn from(rect: Recti) -> WICRect {
+        WICRect {
+            X: rect.left,
+            Y: rect.top,
+            Width: rect.width(),
+            Height: rect.height(),
         }
     }
 }

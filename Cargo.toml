@@ -19,7 +19,7 @@ Currently compatible with:
 workspace = ".."
 
 [features]
-default = []
+default = ["docs"]
 d2d = ["winapi"]
 serialize = ["serde", "serde_derive"]
 docs = ["serialize", "d2d", "mint"]
@@ -35,7 +35,7 @@ rand = "0.5.5"
 [target."cfg(windows)".dependencies.winapi]
 version = "0.3.5"
 optional = true
-features = ["dcommon", "d2dbasetypes", "d2d1", "dwrite"]
+features = ["dcommon", "d2dbasetypes", "d2d1", "dwrite", "wincodec"]
 
 [package.metadata.docs.rs]
 features = ["docs"]
