@@ -1,7 +1,8 @@
 //! Mathematical vector on the 2D (x, y) plane.
 
-use sizef::Sizef;
-use vector2i::Vector2i;
+use crate::sizef::Sizef;
+use crate::vector2i::Vector2i;
+use crate::point2f::Point2f;
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
@@ -59,10 +60,15 @@ impl Vector2f {
         }
     }
 
+    #[inline]
+    pub fn to_point(self) -> Point2f {
+        Point2f::ORIGIN + self
+    }
+
     /// Converts this vector to a size value with the x representing width
     /// and the y representing height.
     #[inline]
-    pub fn as_size(self) -> Sizef {
+    pub fn to_size(self) -> Sizef {
         Sizef {
             width: self.x,
             height: self.y,
@@ -192,9 +198,10 @@ impl Div<f32> for Vector2f {
 
     #[inline]
     fn div(self, rhs: f32) -> Vector2f {
+        let recip = 1.0 / rhs;
         Vector2f {
-            x: self.x / rhs,
-            y: self.y / rhs,
+            x: self.x * recip,
+            y: self.y * recip,
         }
     }
 }
@@ -261,6 +268,17 @@ impl From<mint::Vector2<f32>> for Vector2f {
     #[inline]
     fn from(p: mint::Vector2<f32>) -> Vector2f {
         Vector2f { x: p.x, y: p.y }
+    }
+}
+
+#[cfg(feature = "kurbo")]
+impl From<kurbo::Vec2> for Vector2f {
+    #[inline]
+    fn from(p: kurbo::Vec2) -> Vector2f {
+        Vector2f {
+            x: p.x as f32,
+            y: p.y as f32,
+        }
     }
 }
 

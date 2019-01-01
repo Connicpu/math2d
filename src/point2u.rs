@@ -1,7 +1,7 @@
 //! Mathematical point on the 2D (x, y) plane.
 
-use point2f::Point2f;
-use point2i::Point2i;
+use crate::point2f::Point2f;
+use crate::point2i::Point2i;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_POINT_2U;

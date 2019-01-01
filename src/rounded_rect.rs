@@ -1,8 +1,8 @@
 //! Rounded rectangle. See the struct documentation for more information.
 
-use ellipse::Ellipse;
-use point2f::Point2f;
-use rectf::{RectCorner, Rectf};
+use crate::ellipse::Ellipse;
+use crate::point2f::Point2f;
+use crate::rectf::{RectCorner, Rectf};
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2d1::D2D1_ROUNDED_RECT;
@@ -122,7 +122,7 @@ impl From<D2D1_ROUNDED_RECT> for RoundedRect {
 
 #[cfg(test)]
 mod tests {
-    use rounded_rect::RoundedRect;
+    use crate::rounded_rect::RoundedRect;
 
     #[test]
     fn contains_point() {

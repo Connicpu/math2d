@@ -1,7 +1,7 @@
 //! Quadratic version of the BezierSegment, uses 1 fewer control point than
 //! the cubic variant.
 
-use point2f::Point2f;
+use crate::point2f::Point2f;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2d1::D2D1_QUADRATIC_BEZIER_SEGMENT;

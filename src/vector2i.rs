@@ -1,7 +1,7 @@
 //! Mathematical vector on the 2D (x, y) plane.
 
-use sizeu::Sizeu;
-use vector2f::Vector2f;
+use crate::sizeu::Sizeu;
+use crate::vector2f::Vector2f;
 
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -211,7 +211,7 @@ impl From<mint::Vector2<i32>> for Vector2i {
 
 #[cfg(test)]
 mod tests {
-    use vector2i::Vector2i;
+    use crate::vector2i::Vector2i;
 
     #[test]
     fn addition() {

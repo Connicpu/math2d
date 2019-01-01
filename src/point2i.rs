@@ -1,8 +1,8 @@
 //! Mathematical point on the 2D (x, y) plane.
 
-use point2f::Point2f;
-use point2u::Point2u;
-use vector2i::Vector2i;
+use crate::point2f::Point2f;
+use crate::point2u::Point2u;
+use crate::vector2i::Vector2i;
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 

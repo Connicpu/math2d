@@ -1,11 +1,11 @@
 //! Axis-aligned rectangle defined by the lines of its 4 edges.
 
-use point2f::Point2f;
-use recti::Recti;
-use rectu::Rectu;
-use sizef::Sizef;
-use thicknessf::Thicknessf;
-use vector2f::Vector2f;
+use crate::point2f::Point2f;
+use crate::recti::Recti;
+use crate::rectu::Rectu;
+use crate::sizef::Sizef;
+use crate::thicknessf::Thicknessf;
+use crate::vector2f::Vector2f;
 
 use std::f32::{INFINITY, NEG_INFINITY};
 use std::ops::{Add, Sub};

@@ -1,8 +1,8 @@
 //! Mathematical point on the 2D (x, y) plane.
 
-use point2i::Point2i;
-use point2u::Point2u;
-use vector2f::Vector2f;
+use crate::point2i::Point2i;
+use crate::point2u::Point2u;
+use crate::vector2f::Vector2f;
 
 use std::ops::{Add, Sub};
 
@@ -54,6 +54,11 @@ impl Point2f {
             x: self.x as u32,
             y: self.y as u32,
         }
+    }
+
+    #[inline]
+    pub fn to_vector(self) -> Vector2f {
+        self - ORIGIN
     }
 
     /// Rounds the values in the point to the nearest integer, rounding away
@@ -206,6 +211,14 @@ impl From<mint::Point2<f32>> for Point2f {
     #[inline]
     fn from(p: mint::Point2<f32>) -> Point2f {
         Point2f { x: p.x, y: p.y }
+    }
+}
+
+#[cfg(feature = "kurbo")]
+impl From<kurbo::Vec2> for Point2f {
+    #[inline]
+    fn from(p: kurbo::Vec2) -> Point2f {
+        Point2f { x: p.x as f32, y: p.y as f32 }
     }
 }
 

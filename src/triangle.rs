@@ -1,6 +1,6 @@
 //! Represents a triangle described by its 3 corners.
 
-use point2f::Point2f;
+use crate::point2f::Point2f;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2d1::D2D1_TRIANGLE;

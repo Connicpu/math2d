@@ -18,6 +18,8 @@
 extern crate serde_derive;
 #[cfg(all(feature = "serde", feature = "serde_derive"))]
 extern crate serde;
+#[cfg(feature = "kurbo")]
+extern crate kurbo;
 
 #[cfg(all(windows, feature = "winapi"))]
 extern crate winapi;
@@ -26,42 +28,42 @@ extern crate winapi;
 extern crate mint;
 
 #[doc(inline)]
-pub use arc_segment::{ArcSegment, ArcSize, SweepDirection};
+pub use crate::arc_segment::{ArcSegment, ArcSize, SweepDirection};
 #[doc(inline)]
-pub use bezier_segment::BezierSegment;
-pub use color::Color;
+pub use crate::bezier_segment::BezierSegment;
+pub use crate::color::Color;
 #[doc(inline)]
-pub use ellipse::Ellipse;
+pub use crate::ellipse::Ellipse;
 #[doc(inline)]
-pub use matrix3x2f::Matrix3x2f;
+pub use crate::matrix3x2f::Matrix3x2f;
 #[doc(inline)]
-pub use point2f::Point2f;
+pub use crate::point2f::Point2f;
 #[doc(inline)]
-pub use point2i::Point2i;
+pub use crate::point2i::Point2i;
 #[doc(inline)]
-pub use point2u::Point2u;
+pub use crate::point2u::Point2u;
 #[doc(inline)]
-pub use quad_bezier_segment::QuadBezierSegment;
+pub use crate::quad_bezier_segment::QuadBezierSegment;
 #[doc(inline)]
-pub use rectf::{RectCorner, Rectf};
+pub use crate::rectf::{RectCorner, Rectf};
 #[doc(inline)]
-pub use recti::Recti;
+pub use crate::recti::Recti;
 #[doc(inline)]
-pub use rectu::Rectu;
+pub use crate::rectu::Rectu;
 #[doc(inline)]
-pub use rounded_rect::RoundedRect;
+pub use crate::rounded_rect::RoundedRect;
 #[doc(inline)]
-pub use sizef::Sizef;
+pub use crate::sizef::Sizef;
 #[doc(inline)]
-pub use sizeu::Sizeu;
+pub use crate::sizeu::Sizeu;
 #[doc(inline)]
-pub use thicknessf::Thicknessf;
+pub use crate::thicknessf::Thicknessf;
 #[doc(inline)]
-pub use triangle::Triangle;
+pub use crate::triangle::Triangle;
 #[doc(inline)]
-pub use vector2f::Vector2f;
+pub use crate::vector2f::Vector2f;
 #[doc(inline)]
-pub use vector2i::Vector2i;
+pub use crate::vector2i::Vector2i;
 
 #[doc(hidden)]
 pub mod arc_segment;

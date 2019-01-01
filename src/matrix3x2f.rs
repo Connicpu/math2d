@@ -2,8 +2,8 @@
 //!
 //! See the actual struct documentation for more information.
 
-use point2f::Point2f;
-use vector2f::Vector2f;
+use crate::point2f::Point2f;
+use crate::vector2f::Vector2f;
 
 use std::f32::EPSILON;
 use std::ops::Mul;

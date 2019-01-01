@@ -1,6 +1,6 @@
 //! Represents a margin around an axis-aligned rectangle.
 
-use vector2f::Vector2f;
+use crate::vector2f::Vector2f;
 
 /// Represents a margin around an axis-aligned rectangle.
 #[derive(Copy, Clone, Debug, PartialEq)]

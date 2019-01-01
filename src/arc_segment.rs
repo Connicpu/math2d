@@ -2,8 +2,8 @@
 //! and are designed to be part of a Path. See Direct2D, SVG, etc for
 //! an overview of the Path concept.
 
-use point2f::Point2f;
-use sizef::Sizef;
+use crate::point2f::Point2f;
+use crate::sizef::Sizef;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2d1::D2D1_ARC_SEGMENT;

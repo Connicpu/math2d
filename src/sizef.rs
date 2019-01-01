@@ -1,5 +1,7 @@
 //! Floating point size descriptor.
 
+use crate::vector2f::Vector2f;
+
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_SIZE_F;
 
@@ -20,6 +22,14 @@ impl Sizef {
     #[inline]
     pub fn new(width: f32, height: f32) -> Sizef {
         Sizef { width, height }
+    }
+
+    #[inline]
+    pub fn to_vector(self) -> Vector2f {
+        Vector2f {
+            x: self.width,
+            y: self.height,
+        }
     }
 }
 

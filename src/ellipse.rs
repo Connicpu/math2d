@@ -1,7 +1,7 @@
 //! Axis-aligned ellipse constructed from a center point and the x and y radii.
 
-use matrix3x2f::Matrix3x2f;
-use point2f::Point2f;
+use crate::matrix3x2f::Matrix3x2f;
+use crate::point2f::Point2f;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2d1::D2D1_ELLIPSE;

@@ -1,8 +1,8 @@
 //! Axis-aligned rectangle defined by the lines of its 4 edges.
 
-use point2i::Point2i;
-use rectf::Rectf;
-use rectu::Rectu;
+use crate::point2i::Point2i;
+use crate::rectf::Rectf;
+use crate::rectu::Rectu;
 
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::dcommon::D2D_RECT_L;
