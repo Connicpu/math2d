@@ -20,7 +20,7 @@ Currently compatible with:
 workspace = ".."
 
 [features]
-default = ["docs"]
+default = []
 d2d = ["winapi"]
 serialize = ["serde", "serde_derive"]
 docs = ["serialize", "d2d", "mint", "kurbo"]
