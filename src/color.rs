@@ -178,9 +178,25 @@ fn color_lookups() {
     assert_eq!(Color::lookup("alice-blue-"), None);
 }
 
+#[derive(Debug)]
 pub enum ColorParseError {
     ColorNotFound,
     BadHexFormat,
+}
+
+impl std::fmt::Display for ColorParseError {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(fmt, "{}", std::error::Error::description(self))
+    }
+}
+
+impl std::error::Error for ColorParseError {
+    fn description(&self) -> &str {
+        match self {
+            ColorParseError::ColorNotFound => "Color not found",
+            ColorParseError::BadHexFormat => "Bad hex format",
+        }
+    }
 }
 
 impl std::str::FromStr for Color {
