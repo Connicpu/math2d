@@ -3,6 +3,8 @@
 #[cfg(all(windows, feature = "d2d"))]
 use winapi::um::d2dbasetypes::D2D_COLOR_F;
 
+mod trie;
+
 /// Describes the red, green, blue, and alpha components of a color.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde_derive", derive(Serialize, Deserialize))]
@@ -48,6 +50,143 @@ impl Color {
             b: self.b * ti + other.b * t,
             a: self.a * ti + other.a * t,
         }
+    }
+
+    pub fn lookup(name: &str) -> Option<Color> {
+        let mut node = &trie::NODES[0];
+        let mut name = name.as_bytes();
+
+        'iter: while !name.is_empty() {
+            let idx = match name[0] {
+                b @ b'a'..=b'z' => b - b'a' + 1,
+                b @ b'A'..=b'Z' => b - b'A' + 1,
+                _ => 0,
+            };
+
+            let s = node.children.0 as usize;
+            let e = s + node.children.1 as usize;
+            let list = &trie::CHILDREN[s..e];
+
+            for &(b, nid) in list {
+                if idx == b {
+                    node = &trie::NODES[nid as usize];
+                    name = &name[1..];
+                    continue 'iter;
+                }
+            }
+
+            return None;
+        }
+
+        node.color.map(|c| trie::COLORS[c as usize])
+    }
+
+    pub fn from_str_rgba(s: &str) -> Result<Color, ColorParseError> {
+        match Self::from_str_raw(s) {
+            ColorParseResult::BuiltinColor(color) => Ok(color),
+            ColorParseResult::Data(data, false) => Ok(Color {
+                r: data[0] as f32 / 255.0,
+                g: data[1] as f32 / 255.0,
+                b: data[2] as f32 / 255.0,
+                a: 1.0,
+            }),
+            ColorParseResult::Data(data, true) => Ok(Color {
+                r: data[0] as f32 / 255.0,
+                g: data[1] as f32 / 255.0,
+                b: data[2] as f32 / 255.0,
+                a: data[3] as f32 / 255.0,
+            }),
+            ColorParseResult::ColorNotFound => Err(ColorParseError::ColorNotFound),
+            ColorParseResult::BadHexFormat => Err(ColorParseError::BadHexFormat),
+        }
+    }
+
+    pub fn from_str_argb(s: &str) -> Result<Color, ColorParseError> {
+        match Self::from_str_raw(s) {
+            ColorParseResult::BuiltinColor(color) => Ok(color),
+            ColorParseResult::Data(data, false) => Ok(Color {
+                r: data[0] as f32 / 255.0,
+                g: data[1] as f32 / 255.0,
+                b: data[2] as f32 / 255.0,
+                a: 1.0,
+            }),
+            ColorParseResult::Data(data, true) => Ok(Color {
+                a: data[0] as f32 / 255.0,
+                r: data[1] as f32 / 255.0,
+                g: data[2] as f32 / 255.0,
+                b: data[3] as f32 / 255.0,
+            }),
+            ColorParseResult::ColorNotFound => Err(ColorParseError::ColorNotFound),
+            ColorParseResult::BadHexFormat => Err(ColorParseError::BadHexFormat),
+        }
+    }
+
+    fn from_str_raw(mut s: &str) -> ColorParseResult {
+        s = s.trim();
+        if let Some(color) = Color::lookup(s) {
+            return ColorParseResult::BuiltinColor(color);
+        }
+
+        if s.starts_with('#') {
+            s = s.trim_start_matches('#');
+            if !s.chars().all(|c| c.is_digit(16)) {
+                return ColorParseResult::BadHexFormat;
+            }
+        } else if !s.is_empty() || !s.chars().all(|c| c.is_digit(16)) {
+            return ColorParseResult::ColorNotFound;
+        }
+        if s.len() > 8 {
+            return ColorParseResult::BadHexFormat;
+        }
+
+        let data = u32::from_str_radix(s, 16).unwrap();
+        let byt = |i: u32| ((data >> (i * 8)) & 0xFF) as u8;
+        let nib = |i: u32| ((data >> (i * 4)) & 0xF) as u8;
+        let dnib = |i| nib(i) | (nib(i) << 4);
+        match s.len() {
+            3 => ColorParseResult::Data([dnib(2), dnib(1), dnib(0), 0], false),
+            4 => ColorParseResult::Data([dnib(3), dnib(2), dnib(1), dnib(0)], true),
+            6 => ColorParseResult::Data([byt(2), byt(1), byt(0), 0], false),
+            8 => ColorParseResult::Data([byt(3), byt(2), byt(1), byt(0)], true),
+            _ => ColorParseResult::BadHexFormat,
+        }
+    }
+}
+
+enum ColorParseResult {
+    BuiltinColor(Color),
+    Data([u8; 4], bool),
+    ColorNotFound,
+    BadHexFormat,
+}
+
+#[cfg(test)]
+#[test]
+fn color_lookups() {
+    assert_eq!(Color::lookup("blue"), Some(Color::BLUE));
+    assert_eq!(Color::lookup("BLUE"), Some(Color::BLUE));
+    assert_eq!(Color::lookup("BlUe"), Some(Color::BLUE));
+    assert_eq!(Color::lookup("bLuE"), Some(Color::BLUE));
+    assert_eq!(Color::lookup("bluee"), None);
+    assert_eq!(Color::lookup("blu"), None);
+
+    assert_eq!(Color::lookup("alice-blue"), Some(Color::ALICE_BLUE));
+    assert_eq!(Color::lookup("alice blue"), Some(Color::ALICE_BLUE));
+    assert_eq!(Color::lookup("alice_blue"), Some(Color::ALICE_BLUE));
+    assert_eq!(Color::lookup("alice.blue"), Some(Color::ALICE_BLUE));
+    assert_eq!(Color::lookup("alice+blue"), Some(Color::ALICE_BLUE));
+    assert_eq!(Color::lookup("alice-blue-"), None);
+}
+
+pub enum ColorParseError {
+    ColorNotFound,
+    BadHexFormat,
+}
+
+impl std::str::FromStr for Color {
+    type Err = ColorParseError;
+    fn from_str(s: &str) -> Result<Color, ColorParseError> {
+        Color::from_str_rgba(s)
     }
 }
 
@@ -97,7 +236,7 @@ impl From<D2D_COLOR_F> for Color {
     }
 }
 
-// TODO: Replace this with a const fn when it's stable
+// TODO: Replace this with a const fn when float ops in const fn is stable
 macro_rules! define_color {
     ($r:expr, $g:expr, $b:expr) => {
         Color {
