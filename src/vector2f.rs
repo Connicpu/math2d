@@ -1,8 +1,8 @@
 //! Mathematical vector on the 2D (x, y) plane.
 
+use crate::point2f::Point2f;
 use crate::sizef::Sizef;
 use crate::vector2i::Vector2i;
-use crate::point2f::Point2f;
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
@@ -169,14 +169,18 @@ impl Neg for Vector2f {
     }
 }
 
-impl Mul<f32> for Vector2f {
+impl<V> Mul<V> for Vector2f
+where
+    V: Into<Vector2f>,
+{
     type Output = Vector2f;
 
     #[inline]
-    fn mul(self, rhs: f32) -> Vector2f {
+    fn mul(self, rhs: V) -> Self {
+        let rhs = rhs.into();
         Vector2f {
-            x: self.x * rhs,
-            y: self.y * rhs,
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
         }
     }
 }
