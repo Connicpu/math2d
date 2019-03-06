@@ -113,6 +113,15 @@ impl Vector2f {
         }
     }
 
+    /// Component-wise reciprocal
+    #[inline]
+    pub fn reciprocal(self) -> Self {
+        Vector2f {
+            x: 1.0 / self.x,
+            y: 1.0 / self.y,
+        }
+    }
+
     /// Tests if two vectors are approximately equal to each other within a
     /// given epsilon. The epsilon is applied component-wise. If you would like
     /// to check that two vectors are within a specified distance of each
@@ -197,16 +206,15 @@ impl Mul<Vector2f> for f32 {
     }
 }
 
-impl Div<f32> for Vector2f {
+impl<V> Div<V> for Vector2f
+where
+    V: Into<Vector2f>,
+{
     type Output = Vector2f;
 
     #[inline]
-    fn div(self, rhs: f32) -> Vector2f {
-        let recip = 1.0 / rhs;
-        Vector2f {
-            x: self.x * recip,
-            y: self.y * recip,
-        }
+    fn div(self, rhs: V) -> Vector2f {
+        self * rhs.into().reciprocal()
     }
 }
 
@@ -215,10 +223,7 @@ impl Div<Vector2f> for f32 {
 
     #[inline]
     fn div(self, rhs: Vector2f) -> Vector2f {
-        Vector2f {
-            x: self / rhs.x,
-            y: self / rhs.y,
-        }
+        self * rhs.reciprocal()
     }
 }
 

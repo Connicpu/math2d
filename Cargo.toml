@@ -1,6 +1,6 @@
 [package]
 name = "math2d"
-version = "0.2.0-alpha4"
+version = "0.2.0-alpha5"
 authors = ["Connie Hilarides <conni_h@outlook.com>"]
 license = "MIT"
 edition = "2018"
