@@ -189,6 +189,15 @@ impl Rectf {
             && point.y <= self.bottom;
     }
 
+    /// Determines if two rects overlap at all
+    #[inline]
+    pub fn overlaps(&self, other: &Rectf) -> bool {
+        let a = self.normalized();
+        let b = other.normalized();
+
+        a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+    }
+
     /// Normalizes the rectangle to enforce the invariants
     /// `left < right` and `top < bottom`.
     #[inline]
@@ -196,7 +205,7 @@ impl Rectf {
         Rectf {
             left: self.left.min(self.right),
             top: self.top.min(self.bottom),
-            right: self.left.max(self.top),
+            right: self.left.max(self.right),
             bottom: self.top.max(self.bottom),
         }
     }
