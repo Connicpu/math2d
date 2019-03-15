@@ -172,14 +172,16 @@ impl Matrix3x2f {
         let center = center.into();
         let cos = angle.cos();
         let sin = angle.sin();
+        let x = center.x;
+        let y = center.y;
 
         Matrix3x2f {
             a: cos,
             b: sin,
             c: -sin,
             d: cos,
-            x: center.x - cos * center.x - sin * center.y,
-            y: center.y - cos * center.y - sin * center.x,
+            x: x - cos * x + sin * y,
+            y: y - sin * x - cos * y,
         }
     }
 
@@ -194,16 +196,18 @@ impl Matrix3x2f {
     #[inline]
     pub fn skew(angle_x: f32, angle_y: f32, center: impl Into<Point2f>) -> Matrix3x2f {
         let center = center.into();
-        let tanx = angle_x.tan();
-        let tany = angle_y.tan();
+        let u = angle_x.tan();
+        let v = angle_y.tan();
+        let x = center.x;
+        let y = center.y;
 
         Matrix3x2f {
             a: 1.0,
-            b: tany,
-            c: tanx,
+            b: v,
+            c: u,
             d: 1.0,
-            x: -center.y * tany,
-            y: -center.x * tanx,
+            x: -u * y,
+            y: -v * x,
         }
     }
 
@@ -536,4 +540,25 @@ fn mat32_d2d_bin_compat() {
     assert!(ptr_eq(&mat.x, &d2d.matrix[2][0]));
     assert!(ptr_eq(&mat.y, &d2d.matrix[2][1]));
     assert_eq!(size_of_val(&mat), size_of_val(d2d));
+}
+
+#[test]
+fn rotation_centering() {
+    use std::f32::consts::PI;
+    use rand::{SeedableRng, Rng, XorShiftRng};
+
+    let mut rng = XorShiftRng::from_seed([0x69; 16]);
+    for _ in 0..1000 {
+        let x = rng.gen::<f32>() * 100.0 - 50.0;
+        let y = rng.gen::<f32>() * 100.0 - 50.0;
+        let t = rng.gen::<f32>() * PI;
+
+        let m1 = Matrix3x2f::rotation(t, (x, y));
+
+        let m2 = Matrix3x2f::translation([-x, -y])
+            * Matrix3x2f::rotation(t, (0.0, 0.0))
+            * Matrix3x2f::translation([x, y]);
+
+        assert!(m1.is_approx_eq(&m2, 0.0001));
+    }
 }
