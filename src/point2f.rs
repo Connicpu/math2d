@@ -165,7 +165,7 @@ impl From<(f32, f32)> for Point2f {
 impl From<[f32; 2]> for Point2f {
     #[inline]
     fn from(p: [f32; 2]) -> Point2f {
-        Point2f { x: p[0], y: p[0] }
+        Point2f { x: p[0], y: p[1] }
     }
 }
 
