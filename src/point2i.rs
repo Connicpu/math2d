@@ -149,6 +149,13 @@ impl From<(i32, i32)> for Point2i {
     }
 }
 
+impl From<[i32; 2]> for Point2i {
+    #[inline]
+    fn from(p: [i32; 2]) -> Point2i {
+        Point2i { x: p[0], y: p[1] }
+    }
+}
+
 impl From<Point2i> for (i32, i32) {
     #[inline]
     fn from(p: Point2i) -> (i32, i32) {
