@@ -57,7 +57,7 @@ impl From<(u32, u32)> for Point2u {
 impl From<[u32; 2]> for Point2u {
     #[inline]
     fn from(p: [u32; 2]) -> Point2u {
-        Point2u { x: p[0], y: p[0] }
+        Point2u { x: p[0], y: p[1] }
     }
 }
 
