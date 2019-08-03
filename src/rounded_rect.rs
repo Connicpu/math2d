@@ -9,7 +9,7 @@ use winapi::um::d2d1::D2D1_ROUNDED_RECT;
 
 /// Represents a rectangle with rounded corners described by ellipses that
 /// touch the internal edges of the rectangle at the tangent points.
-/// 
+///
 /// <img src="https://i.imgur.com/TFxM8zJ.png"
 ///      alt="Diagram visualizing the meaning of the structure components"
 ///      style="max-width: 350px" />

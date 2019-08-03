@@ -63,9 +63,9 @@ impl Point2f {
 
     /// Rounds the values in the point to the nearest integer, rounding away
     /// from zero in the half-way case.
-    /// 
+    ///
     /// See [f32::round][1]
-    /// 
+    ///
     /// [1]: https://doc.rust-lang.org/std/primitive.f32.html#method.round
     #[inline]
     pub fn rounded(self) -> Point2f {
@@ -218,7 +218,10 @@ impl From<mint::Point2<f32>> for Point2f {
 impl From<kurbo::Vec2> for Point2f {
     #[inline]
     fn from(p: kurbo::Vec2) -> Point2f {
-        Point2f { x: p.x as f32, y: p.y as f32 }
+        Point2f {
+            x: p.x as f32,
+            y: p.y as f32,
+        }
     }
 }
 

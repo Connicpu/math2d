@@ -102,4 +102,3 @@ fn rectu_d2d_bin_compat() {
     assert!(ptr_eq(&rect.bottom, &d2d.bottom));
     assert_eq!(size_of_val(&rect), size_of_val(d2d));
 }
-

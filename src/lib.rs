@@ -1,25 +1,25 @@
 #![cfg_attr(feature = "docs", warn(missing_docs))]
 //! 2D Mathematics library designed for use with 2D drawing applications.
-//! 
+//!
 //! Primarily designed for the needs of Direct2D, but this library should
 //! be perfectly capable of filling in the needs of other libraries such
 //! as Cairo. If you would like interoperability defitions added please feel
 //! free to open a pull request on the [repository][1].
-//! 
+//!
 //! Currently compatible with:
 //! - Direct2D (winapi types)
 //! - [Mint][2]
-//! 
+//!
 //! [1]: https://github.com/connicpu/math2d
 //! [2]: https://docs.rs/mint
 
 #[cfg(all(feature = "serde", feature = "serde_derive"))]
 #[macro_use]
 extern crate serde_derive;
-#[cfg(all(feature = "serde", feature = "serde_derive"))]
-extern crate serde;
 #[cfg(feature = "kurbo")]
 extern crate kurbo;
+#[cfg(all(feature = "serde", feature = "serde_derive"))]
+extern crate serde;
 
 #[cfg(all(windows, feature = "winapi"))]
 extern crate winapi;

@@ -20,10 +20,7 @@ pub struct QuadBezierSegment {
 impl QuadBezierSegment {
     /// Constructs the bezier segment from its components
     #[inline]
-    pub fn new(
-        p1: impl Into<Point2f>,
-        p2: impl Into<Point2f>,
-    ) -> QuadBezierSegment {
+    pub fn new(p1: impl Into<Point2f>, p2: impl Into<Point2f>) -> QuadBezierSegment {
         QuadBezierSegment {
             p1: p1.into(),
             p2: p2.into(),

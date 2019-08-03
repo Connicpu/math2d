@@ -544,8 +544,8 @@ fn mat32_d2d_bin_compat() {
 
 #[test]
 fn rotation_centering() {
+    use rand::{Rng, SeedableRng, XorShiftRng};
     use std::f32::consts::PI;
-    use rand::{SeedableRng, Rng, XorShiftRng};
 
     let mut rng = XorShiftRng::from_seed([0x69; 16]);
     for _ in 0..1000 {
